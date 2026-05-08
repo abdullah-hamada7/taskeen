@@ -1,0 +1,14 @@
+.dockerignore
+Dockerfile
+.git
+.github
+.vs
+.vscode
+bin/
+obj/
+TestResults/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.sln.docstates
