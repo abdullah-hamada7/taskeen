@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Taskeen.API/Taskeen.API.csproj" />
+  <Project Path="Taskeen.Application/Taskeen.Application.csproj" />
+  <Project Path="Taskeen.Domain/Taskeen.Domain.csproj" />
+  <Project Path="Taskeen.Infrastructure/Taskeen.Infrastructure.csproj" />
+  <Project Path="Taskeen.UnitTests/Taskeen.UnitTests.csproj" />
+</Solution>
