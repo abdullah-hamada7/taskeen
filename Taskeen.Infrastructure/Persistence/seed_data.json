@@ -1,0 +1,22 @@
+{
+  "Towers": [
+    { "Name": "A" },
+    { "Name": "B" },
+    { "Name": "C" },
+    { "Name": "D" }
+  ],
+  "Users": [
+    { "FullName": "Admin User", "IdentityNumber": "ADM001", "Role": "Admin", "Nationality": "Saudi", "Password": "Admin@Taskeen" },
+    { "FullName": "Owner One", "IdentityNumber": "OWN001", "Role": "Owner", "Nationality": "Saudi", "Password": "Owner@Taskeen" },
+    { "FullName": "Owner Two", "IdentityNumber": "OWN002", "Role": "Owner", "Nationality": "Egyptian", "Password": "Owner@Taskeen" },
+    { "FullName": "Supervisor One", "IdentityNumber": "SUP001", "Role": "Supervisor", "Nationality": "Pakistani", "Password": "Sup@Taskeen" },
+    { "FullName": "Supervisor Two", "IdentityNumber": "SUP002", "Role": "Supervisor", "Nationality": "Indian", "Password": "Sup@Taskeen" },
+    { "FullName": "Guest One", "IdentityNumber": "GST001", "Role": "Guest", "Nationality": "British", "Password": "Guest@Taskeen" }
+  ],
+  "Units": [
+    { "Code": "A-101", "TowerName": "A", "OwnerIdentity": "OWN001", "SupervisorIdentity": "SUP001", "BasePrice": 100, "TotalBeds": 4 },
+    { "Code": "B-201", "TowerName": "B", "OwnerIdentity": "OWN002", "SupervisorIdentity": "SUP002", "BasePrice": 150, "TotalBeds": 2 },
+    { "Code": "C-301", "TowerName": "C", "OwnerIdentity": "OWN001", "SupervisorIdentity": "SUP002", "BasePrice": 120, "TotalBeds": 3 },
+    { "Code": "D-401", "TowerName": "D", "OwnerIdentity": "OWN002", "SupervisorIdentity": "SUP001", "BasePrice": 200, "TotalBeds": 4 }
+  ]
+}

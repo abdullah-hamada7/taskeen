@@ -92,3 +92,7 @@ Thumbs.db
 .agents
 implementation_phases_tasks.md
 implementation_plan.md
+full_api_test.ps1
+api_verification_report.md
+test_guest.ps1
+test_api.ps1

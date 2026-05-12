@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Taskeen.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -194,6 +194,12 @@ namespace Taskeen.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Towers_Name",
+                table: "Towers",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UnitBeds_UnitId_BedNumber",
                 table: "UnitBeds",
                 columns: new[] { "UnitId", "BedNumber" },
@@ -219,6 +225,12 @@ namespace Taskeen.Infrastructure.Migrations
                 name: "IX_Units_TowerId",
                 table: "Units",
                 column: "TowerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_IdentityNumber",
+                table: "Users",
+                column: "IdentityNumber",
+                unique: true);
         }
 
         /// <inheritdoc />

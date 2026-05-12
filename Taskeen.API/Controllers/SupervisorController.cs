@@ -45,7 +45,7 @@ public class SupervisorController : ControllerBase
         };
 
         await _userRepository.RegisterRoleAsync(user);
-        return Ok(user);
+        return Ok(new UserDto(user.Id, user.FullName, user.IdentityNumber, user.Nationality, user.Role));
     }
 
     [HttpPost("check-in")]
@@ -56,15 +56,15 @@ public class SupervisorController : ControllerBase
     }
 
     [HttpGet("units")]
-    public async Task<IActionResult> GetAssignedUnits()
+    public async Task<ActionResult<IEnumerable<SupervisorUnitDto>>> GetAssignedUnits()
     {
         var units = await _unitRepository.GetUnitsBySupervisorIdAsync(GetCurrentUserId());
         
-        var statuses = new List<SupervisorUnitDTO>();
+        var statuses = new List<SupervisorUnitDto>();
         foreach (var unit in units)
         {
             var occupants = await _unitRepository.GetOccupantNamesAsync(unit.Id, DateTime.UtcNow);
-            statuses.Add(new SupervisorUnitDTO(unit.Code, unit.TotalBeds, occupants));
+            statuses.Add(new SupervisorUnitDto(unit.Code, unit.TotalBeds, occupants));
         }
 
         return Ok(statuses);

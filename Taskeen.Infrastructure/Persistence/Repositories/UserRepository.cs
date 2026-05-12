@@ -18,8 +18,15 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> AuthenticateAsync(string identity, string password)
     {
-        // Simple authentication for assignment purposes
-        return await _context.Users.FirstOrDefaultAsync(u => u.IdentityNumber == identity);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.IdentityNumber == identity && !u.IsDeleted);
+        
+        if (user == null || string.IsNullOrEmpty(user.PasswordHash))
+            return null;
+
+        if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            return null;
+
+        return user;
     }
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {

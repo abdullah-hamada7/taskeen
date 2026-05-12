@@ -18,5 +18,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
         builder.Property(x => x.Status).HasConversion<string>();
 
         builder.HasIndex(x => new { x.UnitId, x.StartDate, x.EndDate });
+
+        builder.HasQueryFilter(x => !x.User.IsDeleted);
     }
 }

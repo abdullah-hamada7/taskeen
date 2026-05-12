@@ -16,7 +16,11 @@ public class UnitRepository : IUnitRepository
 
     public async Task<Unit?> GetUnitByIdAsync(int id)
     {
-        return await _context.Units.FindAsync(id);
+        return await _context.Units.Include(u => u.Tower)
+            .Include(u => u.Owner)
+            .Include(u => u.Supervisor)
+            .Include(u => u.Beds)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task CreateUnitAsync(Unit unit)
@@ -69,17 +73,34 @@ public class UnitRepository : IUnitRepository
 
     public async Task<IEnumerable<Unit>> GetAllUnitsAsync()
     {
-        return await _context.Units.ToListAsync();
+        return await _context.Units
+            .Include(u => u.Tower)
+            .Include(u => u.Owner)
+            .Include(u => u.Supervisor)
+            .Include(u => u.Beds)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Unit>> GetUnitsByOwnerIdAsync(int ownerId)
     {
-        return await _context.Units.Where(u => u.OwnerId == ownerId).ToListAsync();
+        return await _context.Units
+            .Include(u => u.Tower)
+            .Include(u => u.Owner)
+            .Include(u => u.Supervisor)
+            .Include(u => u.Beds)
+            .Where(u => u.OwnerId == ownerId)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Unit>> GetUnitsBySupervisorIdAsync(int supervisorId)
     {
-        return await _context.Units.Where(u => u.SupervisorId == supervisorId).ToListAsync();
+        return await _context.Units
+            .Include(u => u.Tower)
+            .Include(u => u.Owner)
+            .Include(u => u.Supervisor)
+            .Include(u => u.Beds)
+            .Where(u => u.SupervisorId == supervisorId)
+            .ToListAsync();
     }
 
     public async Task AssignSupervisorAsync(int unitId, int supervisorId)
@@ -121,7 +142,7 @@ public class UnitRepository : IUnitRepository
 
     public async Task<Tower?> GetTowerByIdAsync(int id)
     {
-        return await _context.Towers.FindAsync(id);
+        return await _context.Towers.Include(t => t.Units).FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task AddBedToUnitAsync(UnitBed bed)

@@ -24,26 +24,27 @@ public class UnitsController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetUnits()
+    public async Task<ActionResult<IEnumerable<UnitDto>>> GetUnits()
     {
         var role = _currentUserService.Role;
         var userId = int.Parse(_currentUserService.UserId ?? "0");
 
+        IEnumerable<Unit> units;
         if (role == "Admin")
-            return Ok(await _unitRepository.GetAllUnitsAsync());
+            units = await _unitRepository.GetAllUnitsAsync();
+        else if (role == "Owner")
+            units = await _unitRepository.GetUnitsByOwnerIdAsync(userId);
+        else if (role == "Supervisor")
+            units = await _unitRepository.GetUnitsBySupervisorIdAsync(userId);
+        else
+            return Forbid();
 
-        if (role == "Owner")
-            return Ok(await _unitRepository.GetUnitsByOwnerIdAsync(userId));
-
-        if (role == "Supervisor")
-            return Ok(await _unitRepository.GetUnitsBySupervisorIdAsync(userId));
-
-        return Forbid();
+        return Ok(units.Select(MapToDto));
     }
 
     [HttpGet("{id}")]
     [Authorize]
-    public async Task<IActionResult> GetUnit(int id)
+    public async Task<ActionResult<UnitDto>> GetUnit(int id)
     {
         var unit = await _unitRepository.GetUnitByIdAsync(id);
         if (unit == null) return NotFound();
@@ -51,11 +52,10 @@ public class UnitsController : ControllerBase
         var role = _currentUserService.Role;
         var userId = int.Parse(_currentUserService.UserId ?? "0");
 
-        // Security check: Only Admin, the Owner, or the Supervisor can see unit details
         if (role != "Admin" && unit.OwnerId != userId && unit.SupervisorId != userId)
             return Forbid();
 
-        return Ok(unit);
+        return Ok(MapToDto(unit));
     }
 
     [HttpPost("{id}/beds")]
@@ -74,43 +74,6 @@ public class UnitsController : ControllerBase
         return Ok(bed);
     }
 
-    [HttpGet("calendar/admin")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetAdminCalendar()
-    {
-        var bookings = await _bookingRepository.GetAllBookingsAsync();
-        var units = await _unitRepository.GetAllUnitsAsync();
-
-        var reports = bookings.Select(b => new AdminReportDTO(
-            units.FirstOrDefault(u => u.Id == b.UnitId)?.Code ?? "Unknown",
-            b.BaseAmount,
-            b.TaxAmount,
-            b.TotalAmount
-        )).ToList();
-
-        return Ok(reports);
-    }
-
-    [HttpGet("calendar/owner/{id}")]
-    [Authorize(Roles = "Owner")]
-    public async Task<IActionResult> GetOwnerCalendar(int id)
-    {
-        var unit = await _unitRepository.GetUnitByIdAsync(id);
-        if (unit == null) return NotFound();
-
-        var userId = int.Parse(_currentUserService.UserId ?? "0");
-        if (unit.OwnerId != userId) return Forbid();
-
-        var bookings = await _bookingRepository.GetBookingsByUnitIdAsync(id);
-        var calendar = bookings.Select(b => new OwnerCalendarDTO(
-            unit.Code,
-            b.StartDate,
-            b.EndDate,
-            b.BaseAmount
-        )).ToList();
-
-        return Ok(calendar);
-    }
     [HttpGet("my-occupancy")]
     [Authorize(Roles = "Owner")]
     public async Task<IActionResult> GetOwnerOccupancy()
@@ -118,19 +81,32 @@ public class UnitsController : ControllerBase
         var ownerId = int.Parse(_currentUserService.UserId ?? "0");
         var units = await _unitRepository.GetUnitsByOwnerIdAsync(ownerId);
         
-        var statuses = new List<object>();
+        var statuses = new List<UnitStatusDto>();
         foreach (var unit in units)
         {
             var occupancy = await _unitRepository.GetOccupancyAsync(unit.Id, DateTime.UtcNow);
-            statuses.Add(new
-            {
+            statuses.Add(new UnitStatusDto(
                 unit.Code,
                 unit.TotalBeds,
-                Occupancy = occupancy,
-                IsFull = occupancy >= unit.TotalBeds
-            });
+                occupancy,
+                occupancy >= unit.TotalBeds
+            ));
         }
 
         return Ok(statuses);
+    }
+
+    private UnitDto MapToDto(Unit unit)
+    {
+        return new UnitDto(
+            unit.Id,
+            unit.Code,
+            unit.BasePrice,
+            unit.TotalBeds,
+            unit.Tower != null ? new TowerDto(unit.Tower.Id, unit.Tower.Name) : null,
+            unit.Owner != null ? new UserDto(unit.Owner.Id, unit.Owner.FullName, unit.Owner.IdentityNumber, unit.Owner.Nationality, unit.Owner.Role) : null,
+            unit.Supervisor != null ? new UserDto(unit.Supervisor.Id, unit.Supervisor.FullName, unit.Supervisor.IdentityNumber, unit.Supervisor.Nationality, unit.Supervisor.Role) : null,
+            unit.Beds?.Select(b => new UnitBedDto(b.Id, b.BedNumber)).ToList()
+        );
     }
 }

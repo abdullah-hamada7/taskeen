@@ -10,5 +10,7 @@ public class UnitBedConfiguration : IEntityTypeConfiguration<UnitBed>
     {
         builder.HasKey(x => x.Id);
         builder.HasIndex(x => new { x.UnitId, x.BedNumber }).IsUnique();
+
+        builder.HasQueryFilter(x => !x.Unit.Owner.IsDeleted && !x.Unit.Supervisor.IsDeleted);
     }
 }

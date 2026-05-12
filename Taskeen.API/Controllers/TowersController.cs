@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Taskeen.Application.DTOs;
 using Taskeen.Domain.Repositories;
 
 namespace Taskeen.API.Controllers;
@@ -17,17 +18,17 @@ public class TowersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTowers()
+    public async Task<ActionResult<IEnumerable<TowerDto>>> GetTowers()
     {
         var towers = await _unitRepository.GetAllTowersAsync();
-        return Ok(towers);
+        return Ok(towers.Select(t => new TowerDto(t.Id, t.Name)));
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetTower(int id)
+    public async Task<ActionResult<TowerDto>> GetTower(int id)
     {
         var tower = await _unitRepository.GetTowerByIdAsync(id);
         if (tower == null) return NotFound();
-        return Ok(tower);
+        return Ok(new TowerDto(tower.Id, tower.Name));
     }
 }

@@ -167,6 +167,9 @@ namespace Taskeen.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Towers");
                 });
 
@@ -310,6 +313,9 @@ namespace Taskeen.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdentityNumber")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

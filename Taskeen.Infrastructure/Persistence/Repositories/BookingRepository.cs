@@ -21,7 +21,7 @@ public class BookingRepository : IBookingRepository
                         b.Type == BookingType.OwnerPersonal && 
                         b.StartDate.Year == year &&
                         b.Status != BookingStatus.Cancelled)
-            .SumAsync(b => (b.EndDate - b.StartDate).Days);
+            .SumAsync(b => EF.Functions.DateDiffDay(b.StartDate, b.EndDate));
     }
 
     public async Task CreateBookingAsync(Booking booking)
@@ -42,17 +42,17 @@ public class BookingRepository : IBookingRepository
 
     public async Task<IEnumerable<Booking>> GetAllBookingsAsync()
     {
-        return await _context.Bookings.ToListAsync();
+        return await _context.Bookings.Include(b => b.Unit).Include(b => b.User).ToListAsync();
     }
 
     public async Task<IEnumerable<Booking>> GetBookingsByUnitIdAsync(int unitId)
     {
-        return await _context.Bookings.Where(b => b.UnitId == unitId).ToListAsync();
+        return await _context.Bookings.Include(b => b.Unit).Include(b => b.User).Where(b => b.UnitId == unitId).ToListAsync();
     }
 
     public async Task<Booking?> GetBookingByIdAsync(int id)
     {
-        return await _context.Bookings.FindAsync(id);
+        return await _context.Bookings.Include(b => b.Unit).Include(b => b.User).FirstOrDefaultAsync(b => b.Id == id);
     }
 
     public async Task UpdateBookingAsync(Booking booking)

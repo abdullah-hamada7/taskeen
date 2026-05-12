@@ -12,8 +12,8 @@ using Taskeen.Infrastructure.Persistence;
 namespace Taskeen.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskeenDbContext))]
-    [Migration("20260508152418_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260512151511_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,9 @@ namespace Taskeen.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Towers");
                 });
 
@@ -313,6 +316,9 @@ namespace Taskeen.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdentityNumber")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

@@ -8,6 +8,7 @@ public class User : AuditableEntity
     public int Id { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string IdentityNumber { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
     public string Nationality { get; set; } = string.Empty;
     public UserRole Role { get; set; }
     public bool IsDeleted { get; set; }

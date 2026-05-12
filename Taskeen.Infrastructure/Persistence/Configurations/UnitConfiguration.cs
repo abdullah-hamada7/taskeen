@@ -23,5 +23,7 @@ public class UnitConfiguration : IEntityTypeConfiguration<Unit>
             .WithOne(x => x.Unit)
             .HasForeignKey(x => x.UnitId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasQueryFilter(x => !x.Owner.IsDeleted && !x.Supervisor.IsDeleted);
     }
 }
